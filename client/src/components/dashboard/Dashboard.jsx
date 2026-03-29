@@ -54,7 +54,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const response = await API.get("/todayspent");
+        const response = await API.get("/transaction/filter");
         const formattedData = response.data.data.map((item) => ({
           id: item._id,
           n: item.category,
@@ -73,7 +73,7 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post("/todayspent", {
+      const response = await API.post("/transaction", {
         category: formData.category,
         description: formData.description,
         amount: formData.amount,

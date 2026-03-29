@@ -35,6 +35,46 @@ transactionrouter.get("/transaction/filter", async (req, res) => {
   }
 });
 
+// Get route for analytics
+transactionrouter.get("/transaction/stats", async (req, res) => {
+  try {
+    const { range } = req.query;
+    const now = new Date();
+    let startDate;
+
+    if (range === "daily") {
+      startDate = new Date(now.setHours(0, 0, 0, 0));
+    } else if (range === "weekly") {
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (range === "monthly") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+
+    const matchStage = startDate ? { date: { $gte: startDate } } : {};
+
+    const stats = await Transaction.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: "$category",
+          total: { $sum: { $toDouble: "$amount" } }, // 🔥 critical
+        },
+      },
+      {
+        $project: {
+          name: "$_id",
+          value: "$total",
+          _id: 0,
+        },
+      },
+    ]);
+
+    res.json({ data: stats });
+  } catch (err) {
+    console.error("STATS ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // get specific transaction
 transactionrouter.get("/transaction/:id", async (req, res) => {

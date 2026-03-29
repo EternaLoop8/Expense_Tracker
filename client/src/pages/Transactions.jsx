@@ -22,7 +22,7 @@ const Transactions = () => {
 
         const formatted = res.data.data.map((item) => {
           const amount = parseFloat(
-            item.amount?.$numberDecimal || item.amount || 0
+            item.amount?.$numberDecimal || item.amount || 0,
           );
 
           return {
@@ -61,8 +61,8 @@ const Transactions = () => {
                   rawAmount: formData.amount,
                   a: `-₹${parseFloat(formData.amount).toFixed(2)}`,
                 }
-              : item
-          )
+              : item,
+          ),
         );
       } else {
         const res = await API.post("/transaction", formData);
@@ -112,7 +112,6 @@ const Transactions = () => {
           Add
         </button>
       </div>
-
       {/* LIST */}
       <div className="grid gap-4">
         {expenses.map((item) => (
@@ -167,12 +166,18 @@ const Transactions = () => {
           </div>
         ))}
       </div>
-
       {/* MODAL */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-xl w-[90%] max-w-md shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* Overlay (blur instead of black) */}
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+          ></div>
+
+          {/* Floating Box */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-6 animate-fadeIn">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">
               {editId ? "Edit Transaction" : "Add Transaction"}
             </h2>
 
@@ -184,7 +189,7 @@ const Transactions = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, category: e.target.value })
                 }
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg outline-none transition"
                 required
               />
 
@@ -195,7 +200,7 @@ const Transactions = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg outline-none transition"
               />
 
               <input
@@ -205,25 +210,26 @@ const Transactions = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg outline-none transition"
                 required
               />
 
-              <div className="flex justify-end gap-2 mt-3">
+              {/* Buttons */}
+              <div className="flex justify-end gap-3 mt-4">
                 <button
                   type="button"
                   onClick={() => {
                     setShowModal(false);
                     setEditId(null);
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded"
+                  className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:opacity-90 transition"
                 >
                   {editId ? "Update" : "Add"}
                 </button>
