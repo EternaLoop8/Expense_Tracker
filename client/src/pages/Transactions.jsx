@@ -229,7 +229,7 @@ const Transactions = () => {
 
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:opacity-90 transition"
+                  className="px-4 py-2 rounded-lg bg-linear-to-r from-blue-500 to-purple-500 text-white hover:opacity-90 transition"
                 >
                   {editId ? "Update" : "Add"}
                 </button>
