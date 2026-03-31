@@ -1,6 +1,23 @@
-import React from 'react';
+import React from "react";
+import API from "../../api";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const Profile = () => {
+  // Fix 1: Initialize with empty strings to avoid crashes
+  const [username, setusername] = useState({ name: "", email: "" });
+
+  useEffect(() => {
+    API.get("/profiles/all")
+      .then((res) => {
+        if (res.data.length > 0) {
+          // Fix: Ensure you're grabbing the first object from the array
+          setusername(res.data[0]);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <div className="p-6 bg-slate-50 min-h-screen">
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -13,7 +30,9 @@ const Profile = () => {
 
         {/* User Info */}
         <div className="pt-16 pb-8 px-8 text-center border-b border-slate-100">
-          <h1 className="text-2xl font-bold text-slate-800">Alex Tracker</h1>
+          <h1 className="text-2xl font-bold text-slate-800">
+            {username.name || "Loading..."} {/* Fix 2: Dynamic Name */}
+          </h1>
           <p className="text-slate-500 text-sm">Member since January 2024</p>
         </div>
 
@@ -21,21 +40,45 @@ const Profile = () => {
         <div className="p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-              <input type="text" defaultValue="Alex Tracker" className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none" />
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                // Fix 3: Fallback to empty string so React doesn't complain
+                value={username.name || ""}
+                onChange={(e) =>
+                  setusername({ ...username, name: e.target.value })
+                }
+                className="..."
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
-              <input type="email" defaultValue="alex@example.com" className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none" />
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                defaultValue="alex@example.com"
+                className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+              />
             </div>
           </div>
 
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
             <div>
-              <p className="font-semibold text-slate-800 text-sm">Monthly Report Emails</p>
-              <p className="text-xs text-slate-500">Receive a PDF summary every 30 days</p>
+              <p className="font-semibold text-slate-800 text-sm">
+                Monthly Report Emails
+              </p>
+              <p className="text-xs text-slate-500">
+                Receive a PDF summary every 30 days
+              </p>
             </div>
-            <input type="checkbox" className="w-5 h-5 accent-blue-600 cursor-pointer" defaultChecked />
+            <input
+              type="checkbox"
+              className="w-5 h-5 accent-blue-600 cursor-pointer"
+              defaultChecked
+            />
           </div>
 
           <button className="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition">

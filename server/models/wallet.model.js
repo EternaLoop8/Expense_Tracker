@@ -11,6 +11,7 @@ const walletSchema = new Schema({
     type: String,
     required: true,
     default: "₹",
+    other: "$",
   },
 });
 
